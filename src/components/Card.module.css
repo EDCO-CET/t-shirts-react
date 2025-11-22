@@ -5,5 +5,9 @@
   gap: 0.5rem;
   padding: 1rem;
   border-radius: 8px;
-  max-width: 25rem;
+  max-width: 18rem;
+}
+
+.card__price {
+  color: #4766ee;
 }
