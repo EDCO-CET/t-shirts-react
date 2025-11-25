@@ -1,16 +1,36 @@
 import { useState } from 'react';
 import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
+import { useForm } from '../hooks/useForm';
 import formStyles from './ContactForm.module.css';
 
 function ContactForm() {
-  const [errors, setErrors] = useState({});
+  const emailValidation = (email) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email) ? '' : 'Email is not valid';
+  };
+  const nameValidation = (name) => {
+    return name.length > 3 ? '' : 'Name must be at least 3 characters long';
+  };
 
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    message: '',
-  });
+  const messageValidation = (message) => {
+    return message.length > 10
+      ? ''
+      : 'Message must be at least 10 characters long';
+  };
+  const validationRules = {
+    name: (value) => nameValidation(value),
+    email: (value) => emailValidation(value),
+    message: (value) => messageValidation(value),
+  };
+  const { values, handleChange, errors, reset } = useForm(
+    {
+      name: '',
+      email: '',
+      message: '',
+    },
+    validationRules
+  );
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const showSwal = () => {
@@ -23,48 +43,10 @@ function ContactForm() {
     });
   };
 
-  const emailValidation = (email) => {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(email);
-  };
-  const nameValidation = (name) => {
-    return name.length > 3;
-  };
-
-  const messageValidation = (message) => {
-    return message.length > 10;
-  };
-
-  const validateForm = () => {
-    const newErrors = {};
-    if (!nameValidation(formData.name)) {
-      newErrors.name = 'Name must be at least 3 characters long';
-    }
-    if (!emailValidation(formData.email)) {
-      newErrors.email = 'Email is not valid';
-    }
-    if (!messageValidation(formData.message)) {
-      newErrors.message = 'Message must be at least 10 characters long';
-    }
-    return newErrors;
-  };
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-
-    const newErrors = validateForm();
-    setErrors(newErrors);
-
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
-    console.log('Form Data:', formData);
+    console.log('Form Data:', values);
     try {
       await new Promise((resolve) => setTimeout(resolve, 4000));
       showSwal();
@@ -77,11 +59,7 @@ function ContactForm() {
   };
 
   const resetForm = () => {
-    setFormData({
-      name: '',
-      email: '',
-      message: '',
-    });
+    reset();
   };
 
   return (
@@ -93,7 +71,7 @@ function ContactForm() {
         name='name'
         className={formStyles.form__text}
         onChange={handleChange}
-        value={formData.name}
+        value={values.name}
         aria-invalid={!!errors.name}
       />
       {errors.name && <p className={formStyles.error}>{errors.name}</p>}
@@ -104,7 +82,7 @@ function ContactForm() {
         name='email'
         className={formStyles.form__text}
         onChange={handleChange}
-        value={formData.email}
+        value={values.email}
         aria-invalid={!!errors.email}
       />
       {errors.email && <p className={formStyles.error}>{errors.email}</p>}
@@ -115,7 +93,7 @@ function ContactForm() {
         className={formStyles.form__text}
         rows='5'
         onChange={handleChange}
-        value={formData.message}
+        value={values.message}
         aria-invalid={!!errors.message}
       ></textarea>
       {errors.message && <p className={formStyles.error}>{errors.message}</p>}
