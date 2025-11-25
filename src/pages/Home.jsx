@@ -1,5 +1,4 @@
 import Card from '../components/Card';
-import Counter from '../components/Counter';
 
 function Home() {
   const products = [
@@ -45,9 +44,6 @@ function Home() {
               description={product.description}
             />
           ))}
-        </section>
-        <section className='counter_container'>
-          <Counter />
         </section>
       </header>
     </>
