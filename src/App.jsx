@@ -1,18 +1,31 @@
+import { Suspense } from 'react';
+import { Route, BrowserRouter as Router, Routes } from 'react-router';
 import './App.css';
-import ContactForm from './components/ContactForm';
+import Loading from './components/Loading';
 import Navbar from './components/Navbar';
-import Home from './pages/Home';
+import routes from './routes';
 
 function App() {
   return (
     <>
-      <header>
-        <Navbar />
-      </header>
-      <main className='main__container'>
-        <Home />
-        <ContactForm />
-      </main>
+      <Router>
+        <header>
+          <Navbar />
+        </header>
+        <main className='main__container'>
+          <Suspense fallback={<Loading />}>
+            <Routes>
+              {routes.map((route) => (
+                <Route
+                  key={route.path}
+                  path={route.path}
+                  element={<route.element />}
+                />
+              ))}
+            </Routes>
+          </Suspense>
+        </main>
+      </Router>
     </>
   );
 }

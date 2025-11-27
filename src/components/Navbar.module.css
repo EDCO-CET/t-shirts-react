@@ -14,7 +14,16 @@
   gap: 1rem;
 }
 
-.navbar a {
-  text-decoration: none;
+.navActive {
+  color: #ff6b6b;
+}
+
+.navInactive {
   color: #fff;
+}
+
+a:hover {
+  color: #aaa;
+  text-decoration: underline;
+  cursor: pointer;
 }

@@ -1,3 +1,4 @@
+import { NavLink } from 'react-router';
 import styles from './Navbar.module.css';
 
 function Navbar() {
@@ -5,13 +6,24 @@ function Navbar() {
     <nav className={styles.navbar}>
       <ul>
         <li>
-          <a href='#'>Home</a>
+          <NavLink
+            to='/'
+            className={({ isActive }) =>
+              isActive ? styles.navActive : styles.navInactive
+            }
+          >
+            Home
+          </NavLink>
         </li>
         <li>
-          <a href='#'>Products</a>
-        </li>
-        <li>
-          <a href='#'>Contact</a>
+          <NavLink
+            to='/contact'
+            className={({ isActive }) =>
+              isActive ? styles.navActive : styles.navInactive
+            }
+          >
+            Contact
+          </NavLink>
         </li>
       </ul>
     </nav>
