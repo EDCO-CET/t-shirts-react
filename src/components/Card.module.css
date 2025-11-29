@@ -1,13 +1,50 @@
 .card {
   display: flex;
   flex-direction: column;
-  border: 1px solid #ccc;
+  background-color: var(--surface);
+  border: 1px solid var(--border-color);
   gap: 0.5rem;
-  padding: 1rem;
-  border-radius: 8px;
+  padding: 1.5rem;
+  border-radius: 12px;
   max-width: 18rem;
+  transition: all 0.3s ease;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(99, 102, 241, 0.15);
+  border-color: var(--primary-color);
+}
+
+.card__title {
+  color: var(--text-primary);
+  font-weight: 600;
+  font-size: 1.1rem;
+  margin: 0;
+}
+
+.card__image {
+  border-radius: 8px;
+  width: 100%;
+  height: auto;
+  object-fit: cover;
 }
 
 .card__price {
-  color: #4766ee;
+  color: var(--primary-color);
+  font-weight: 700;
+  font-size: 1.3rem;
+  margin: 0.5rem 0;
+}
+
+.card__price::before {
+  content: '$';
+}
+
+.card__description {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  line-height: 1.5;
+  margin: 0;
 }
