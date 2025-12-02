@@ -46,3 +46,8 @@
 a:hover {
   cursor: pointer;
 }
+
+.user_logged {
+  display: flex;
+  gap: 0.5rem;
+}
