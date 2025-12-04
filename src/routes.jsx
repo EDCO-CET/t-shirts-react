@@ -5,6 +5,7 @@ import Login from './pages/Login';
 import NotFound from './pages/NotFound';
 import Profile from './pages/Profile';
 import Users from './pages/Users';
+import TShirts from './pages/TShirts';
 
 const Home = lazy(() => import('./pages/Home'));
 
@@ -20,6 +21,15 @@ const routes = [
       </ProtectedRoute>
     ),
     name: 'Users',
+  },
+  {
+    path: '/tshirts',
+    element: (
+      <ProtectedRoute>
+        <TShirts />
+      </ProtectedRoute>
+    ),
+    name: 'T-Shirts',
   },
   { path: '/login', element: <Login />, name: 'Login' },
   { path: '*', element: <NotFound />, name: 'NotFound' },

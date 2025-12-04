@@ -19,11 +19,13 @@ function Gallery() {
           <h2>{error}</h2>
         </div>
       )}
-      {!loading && !error && products.results.length === 0 && (
+      {!loading && !error && (!products || !products.results || products.results.length === 0) && (
         <h2>Products not found.</h2>
       )}
       {!loading &&
         !error &&
+        products &&
+        products.results &&
         products.results.length > 0 &&
         products.results.map((product) => (
           <Card

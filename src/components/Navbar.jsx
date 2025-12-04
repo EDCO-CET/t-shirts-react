@@ -30,6 +30,18 @@ function Navbar() {
         <li>
           {user && (
             <NavLink
+              to='/tshirts'
+              className={({ isActive }) =>
+                isActive ? styles.navActive : styles.navInactive
+              }
+            >
+              T-Shirts
+            </NavLink>
+          )}
+        </li>
+        <li>
+          {user && (
+            <NavLink
               to='/users'
               className={({ isActive }) =>
                 isActive ? styles.navActive : styles.navInactive

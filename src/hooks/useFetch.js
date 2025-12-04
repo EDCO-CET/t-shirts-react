@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 
-export function useFetch(url) {
+export function useFetch(url, options = {}) {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -10,7 +10,7 @@ export function useFetch(url) {
       try {
         setLoading(true);
         setError(null);
-        const response = await fetch(url);
+        const response = await fetch(url, options);
         if (!response.ok) {
           throw new Error('Network response was not ok');
         }
@@ -23,7 +23,8 @@ export function useFetch(url) {
       }
     }
     fetchData();
-  }, [url]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [url, JSON.stringify(options)]);
 
   return { data, loading, error };
 }

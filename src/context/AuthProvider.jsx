@@ -20,20 +20,31 @@ export const AuthProvider = ({ children }) => {
     setLoading(true);
 
     try {
-      await new Promise((resolve) => setTimeout(resolve, 3000));
+      const response = await fetch('http://localhost:3000/api/auth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password }),
+      });
 
-      if (email.length > 5 && password.length > 5) {
-        const mockUser = {
-          email,
-          name: 'John Doe',
-          role: 'editor',
-        };
-        setUser(mockUser);
-      } else {
+      if (!response.ok) {
         throw new Error('Invalid email or password');
       }
+
+      const { user, token } = await response.json();
+
+      const userData = {
+        email: user.email || email,
+        name: user.name || user.email || 'User',
+        role: user.role || 'user',
+        token,
+      };
+
+      setUser(userData);
     } catch (error) {
-      console.log(error);
+      console.error('Login error:', error);
+      throw error;
     } finally {
       setLoading(false);
     }
