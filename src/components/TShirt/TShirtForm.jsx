@@ -21,7 +21,7 @@ function TShirtForm({ tshirt, onSubmit, onCancel }) {
   const validationRules = {
     name: (value) => nameValidation(value),
     price: (value) => priceValidation(value),
-    image: (value) => imageValidation(value),
+    imageUrl: (value) => imageValidation(value),
   };
 
   const initialValues = tshirt || { name: '', price: '', image: '' };
@@ -97,18 +97,18 @@ function TShirtForm({ tshirt, onSubmit, onCancel }) {
       />
       {errors.price && <p className={formStyles.error}>{errors.price}</p>}
 
-      <label htmlFor='image'>Image URL</label>
+      <label htmlFor='imageUrl'>Image URL</label>
       <input
         type='url'
-        id='image'
-        name='image'
+        id='imageUrl'
+        name='imageUrl'
         className={formStyles.form__text}
         onChange={handleChange}
-        value={values.image}
-        aria-invalid={!!errors.image}
+        value={values.imageUrl}
+        aria-invalid={!!errors.imageUrl}
         required
       />
-      {errors.image && <p className={formStyles.error}>{errors.image}</p>}
+      {errors.imageUrl && <p className={formStyles.error}>{errors.imageUrl}</p>}
 
       {values.image && (
         <div className={formStyles.preview}>

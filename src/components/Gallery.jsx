@@ -2,8 +2,7 @@ import { useFetch } from '../hooks/useFetch';
 import Card from './Card';
 
 function Gallery() {
-  const productApiUrl =
-    'https://gist.githubusercontent.com/jhonatan89/0f0a054ebd354b002d88e9fd31f337d7/raw/2eabdcd6c6650a1cfcc7eda2a1a94d1871c7fe9b/t-shirt.json';
+  const productApiUrl = 'http://localhost:3000/api/tshirts';
 
   const { data: products, loading, error } = useFetch(productApiUrl);
 
@@ -19,20 +18,22 @@ function Gallery() {
           <h2>{error}</h2>
         </div>
       )}
-      {!loading && !error && (!products || !products.results || products.results.length === 0) && (
-        <h2>Products not found.</h2>
-      )}
+      {!loading &&
+        !error &&
+        (!products || !products.tshirts || products.tshirts.length === 0) && (
+          <h2>Products not found.</h2>
+        )}
       {!loading &&
         !error &&
         products &&
-        products.results &&
-        products.results.length > 0 &&
-        products.results.map((product) => (
+        products.tshirts &&
+        products.tshirts.length > 0 &&
+        products.tshirts.map((product) => (
           <Card
             key={product.id}
             title={product.name}
             price={product.price}
-            image={product.image}
+            image={product.imageUrl}
             description={product.description}
           />
         ))}

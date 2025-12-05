@@ -35,7 +35,7 @@ function Navbar() {
                 isActive ? styles.navActive : styles.navInactive
               }
             >
-              T-Shirts
+              Manage T-shirts
             </NavLink>
           )}
         </li>

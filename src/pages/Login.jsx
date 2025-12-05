@@ -1,15 +1,22 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import styles from './Login.module.css';
 
 function Login() {
+  const navigate = useNavigate();
   const { login, loading } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    login(email, password);
+  const handleSubmit = async (e) => {
+    try {
+      e.preventDefault();
+      await login(email, password);
+      navigate('/tshirts');
+    } catch (error) {
+      console.error('Login error:', error);
+    }
   };
 
   return (

@@ -1,4 +1,6 @@
-import { useState, useMemo } from 'react';
+/* eslint-disable quotes */
+import { useMemo, useState } from 'react';
+import Swal from 'sweetalert2';
 import { TShirtForm, TShirtList } from '../components/TShirt';
 import { useAuth } from '../hooks/useAuth';
 import { useFetch } from '../hooks/useFetch';
@@ -59,15 +61,38 @@ function TShirts() {
   };
 
   const handleDelete = async (id) => {
-    if (!window.confirm('Are you sure you want to delete this t-shirt?')) {
+    const result = await Swal.fire({
+      title: 'Are you sure?',
+      text: "You won't be able to revert this!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes, delete it!',
+      cancelButtonText: 'Cancel',
+    });
+
+    if (!result.isConfirmed) {
       return;
     }
 
     try {
       await tshirtService.delete(id, user.token);
       refreshTshirts();
+      await Swal.fire({
+        title: 'Deleted!',
+        text: 'Your t-shirt has been deleted.',
+        icon: 'success',
+        timer: 2000,
+        showConfirmButton: false,
+      });
     } catch (err) {
-      alert('Error deleting t-shirt: ' + err.message);
+      await Swal.fire({
+        title: 'Error!',
+        text: 'Error deleting t-shirt: ' + err.message,
+        icon: 'error',
+        confirmButtonText: 'OK',
+      });
     }
   };
 
