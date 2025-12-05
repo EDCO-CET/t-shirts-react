@@ -2,7 +2,7 @@ import { useFetch } from '../hooks/useFetch';
 import Card from './Card';
 
 function Gallery() {
-  const productApiUrl = 'http://localhost:3000/api/tshirts';
+  const productApiUrl = `${import.meta.env.VITE_API_BASE_URL}/api/tshirts`;
 
   const { data: products, loading, error } = useFetch(productApiUrl);
 

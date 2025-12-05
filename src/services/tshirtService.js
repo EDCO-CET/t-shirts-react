@@ -1,4 +1,4 @@
-const API_URL = 'http://localhost:3000/api/tshirts';
+const API_URL = `${import.meta.env.VITE_API_BASE_URL}/api/tshirts`;
 
 const getAuthHeaders = (token) => ({
   'Content-Type': 'application/json',

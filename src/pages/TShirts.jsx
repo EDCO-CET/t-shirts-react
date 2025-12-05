@@ -7,7 +7,7 @@ import { useFetch } from '../hooks/useFetch';
 import { tshirtService } from '../services/tshirtService';
 import styles from './TShirts.module.css';
 
-const API_URL = 'http://localhost:3000/api/tshirts';
+const API_URL = `${import.meta.env.VITE_API_BASE_URL}/api/tshirts`;
 
 function TShirts() {
   const { user, hasRole } = useAuth();
