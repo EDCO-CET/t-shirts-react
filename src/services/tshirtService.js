@@ -1,75 +1,79 @@
-const API_URL = `${import.meta.env.VITE_API_BASE_URL}/api/tshirts`;
-
-const getAuthHeaders = (token) => ({
-  'Content-Type': 'application/json',
-  Authorization: `Bearer ${token}`,
-});
+import { supabase } from '../lib/supabase';
 
 export const tshirtService = {
-  async getAll(token) {
-    const response = await fetch(API_URL, {
-      method: 'GET',
-      headers: getAuthHeaders(token),
-    });
-
-    if (!response.ok) {
+  async getAll() {
+    const { data, error } = await supabase
+      .from('Tshirt')
+      .select('*')
+      .order('created_at', { ascending: false });
+    if (error) {
       throw new Error('Failed to fetch t-shirts');
     }
-
-    return response.json();
+    return { tshirts: data };
   },
 
-  async getById(id, token) {
-    const response = await fetch(`${API_URL}/${id}`, {
-      method: 'GET',
-      headers: getAuthHeaders(token),
-    });
+  async getById(id) {
+    const { data, error } = await supabase
+      .from('Tshirt')
+      .select('*')
+      .eq('id', id)
+      .single();
 
-    if (!response.ok) {
+    if (error) {
       throw new Error('Failed to fetch t-shirt');
     }
-
-    return response.json();
+    return data;
   },
 
-  async create(tshirt, token) {
-    const response = await fetch(API_URL, {
-      method: 'POST',
-      headers: getAuthHeaders(token),
-      body: JSON.stringify(tshirt),
-    });
+  async create(tshirt) {
+    const { data, error } = await supabase
+      .from('Tshirt')
+      .insert([tshirt])
+      .select()
+      .single();
+    console.log('created t-shirt', data);
 
-    if (!response.ok) {
+    if (error) {
       throw new Error('Failed to create t-shirt');
     }
-
-    return response.json();
+    return data;
   },
 
-  async update(id, tshirt, token) {
-    const response = await fetch(`${API_URL}/${id}`, {
-      method: 'PUT',
-      headers: getAuthHeaders(token),
-      body: JSON.stringify(tshirt),
-    });
+  async update(id, tshirt) {
+    console.log('Updating t-shirt - ID:', id);
+    console.log('Updating t-shirt - Data:', tshirt);
 
-    if (!response.ok) {
-      throw new Error('Failed to update t-shirt');
+    const { data, error } = await supabase
+      .from('Tshirt')
+      .update(tshirt)
+      .eq('id', id)
+      .select();
+
+    console.log('Update response - Data:', data);
+    console.log('Update response - Error:', error);
+
+    if (error) {
+      console.error('Supabase update error details:', error);
+      throw new Error(`Failed to update t-shirt: ${error.message}`);
     }
 
-    return response.json();
+    if (!data || data.length === 0) {
+      console.warn('Update returned no data - possible RLS policy issue');
+    }
+
+    return data;
   },
 
-  async delete(id, token) {
-    const response = await fetch(`${API_URL}/${id}`, {
-      method: 'DELETE',
-      headers: getAuthHeaders(token),
-    });
+  async delete(id) {
+    const { data, error } = await supabase
+      .from('Tshirt')
+      .delete()
+      .eq('id', id)
+      .select();
 
-    if (!response.ok) {
+    if (error) {
       throw new Error('Failed to delete t-shirt');
     }
-
-    return response.json();
+    return data;
   },
 };

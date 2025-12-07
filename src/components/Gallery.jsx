@@ -1,10 +1,26 @@
-import { useFetch } from '../hooks/useFetch';
+import { useEffect, useState } from 'react';
+import { tshirtService } from '../services/tshirtService';
 import Card from './Card';
 
 function Gallery() {
-  const productApiUrl = `${import.meta.env.VITE_API_BASE_URL}/api/tshirts`;
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  const { data: products, loading, error } = useFetch(productApiUrl);
+  useEffect(() => {
+    setLoading(true);
+    const fetchTshirts = async () => {
+      try {
+        const { tshirts } = await tshirtService.getAll();
+        setProducts(tshirts);
+      } catch (error) {
+        setError(error.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchTshirts();
+  }, []);
 
   return (
     <>
@@ -18,17 +34,14 @@ function Gallery() {
           <h2>{error}</h2>
         </div>
       )}
-      {!loading &&
-        !error &&
-        (!products || !products.tshirts || products.tshirts.length === 0) && (
-          <h2>Products not found.</h2>
-        )}
+      {!loading && !error && (!products || !products.length === 0) && (
+        <h2>Products not found.</h2>
+      )}
       {!loading &&
         !error &&
         products &&
-        products.tshirts &&
-        products.tshirts.length > 0 &&
-        products.tshirts.map((product) => (
+        products.length > 0 &&
+        products.map((product) => (
           <Card
             key={product.id}
             title={product.name}

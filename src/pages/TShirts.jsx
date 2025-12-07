@@ -1,49 +1,43 @@
 /* eslint-disable quotes */
-import { useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import Swal from 'sweetalert2';
 import { TShirtForm, TShirtList } from '../components/TShirt';
 import { useAuth } from '../hooks/useAuth';
-import { useFetch } from '../hooks/useFetch';
 import { tshirtService } from '../services/tshirtService';
 import styles from './TShirts.module.css';
 
-const API_URL = `${import.meta.env.VITE_API_BASE_URL}/api/tshirts`;
-
 function TShirts() {
-  const { user, hasRole } = useAuth();
+  const { hasRole } = useAuth();
   const [editingTshirt, setEditingTshirt] = useState(null);
   const [showForm, setShowForm] = useState(false);
-  const [refreshKey, setRefreshKey] = useState(0);
+  const [tshirts, setTshirts] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
   const isAdmin = hasRole('admin');
 
-  const fetchOptions = useMemo(
-    () => ({
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${user.token}`,
-      },
-    }),
-    [user.token]
-  );
-
-  const { data, loading, error } = useFetch(
-    `${API_URL}?_refresh=${refreshKey}`,
-    fetchOptions
-  );
-
-  const tshirts = data?.tshirts || [];
-
-  const refreshTshirts = () => {
-    setRefreshKey((prev) => prev + 1);
+  const fetchProducts = async () => {
+    try {
+      setLoading(true);
+      const { tshirts } = await tshirtService.getAll();
+      setTshirts(tshirts);
+    } catch (error) {
+      setError(error.message);
+      console.error('Error fetching products:', error);
+    } finally {
+      setLoading(false);
+    }
   };
+
+  useEffect(() => {
+    fetchProducts();
+  }, []);
 
   const handleCreate = async (tshirtData) => {
     try {
-      await tshirtService.create(tshirtData, user.token);
-      refreshTshirts();
+      await tshirtService.create(tshirtData);
       setShowForm(false);
+      await fetchProducts();
     } catch (err) {
       alert('Error creating t-shirt: ' + err.message);
     }
@@ -51,10 +45,10 @@ function TShirts() {
 
   const handleUpdate = async (tshirtData) => {
     try {
-      await tshirtService.update(editingTshirt.id, tshirtData, user.token);
-      refreshTshirts();
+      await tshirtService.update(editingTshirt.id, tshirtData);
       setEditingTshirt(null);
       setShowForm(false);
+      await fetchProducts();
     } catch (err) {
       alert('Error updating t-shirt: ' + err.message);
     }
@@ -77,8 +71,8 @@ function TShirts() {
     }
 
     try {
-      await tshirtService.delete(id, user.token);
-      refreshTshirts();
+      await tshirtService.delete(id);
+      await fetchProducts();
       await Swal.fire({
         title: 'Deleted!',
         text: 'Your t-shirt has been deleted.',

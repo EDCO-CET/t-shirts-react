@@ -24,7 +24,7 @@ function TShirtForm({ tshirt, onSubmit, onCancel }) {
     imageUrl: (value) => imageValidation(value),
   };
 
-  const initialValues = tshirt || { name: '', price: '', image: '' };
+  const initialValues = tshirt || { name: '', price: '', imageUrl: '' };
 
   const { values, handleChange, errors, reset } = useForm(
     initialValues,

@@ -1,44 +1,50 @@
 import { useEffect, useState } from 'react';
+import { supabase } from '../lib/supabase';
 import { AuthContext } from './auth';
 
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(() => {
-    const savedUser = localStorage.getItem('auth_user');
-    return savedUser ? JSON.parse(savedUser) : null;
-  });
+  const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    if (user) {
-      localStorage.setItem('auth_user', JSON.stringify(user));
-    } else {
-      localStorage.removeItem('auth_user');
-    }
-  }, [user]);
+    // Get initial session
+    const getInitialSession = async () => {
+      const {
+        data: { session },
+        error,
+      } = await supabase.auth.getSession();
+      if (error) {
+        console.error('Error getting session:', error);
+      } else if (session?.user) {
+        setUser({
+          email: session.user.email,
+          name: session.user.email,
+          role: 'admin',
+        });
+      }
+      setLoading(false);
+    };
+
+    getInitialSession();
+  }, []);
 
   const login = async (email, password) => {
     setLoading(true);
 
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/auth/login`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email, password }),
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
       });
 
-      if (!response.ok) {
-        throw new Error('Invalid email or password');
+      if (error) {
+        throw error;
       }
 
-      const { user, token } = await response.json();
-
       const userData = {
-        email: user.email || email,
-        name: user.name || user.email || 'User',
-        role: user.role || 'user',
-        token,
+        email: data.user.email || email,
+        name: data.user.name || data.user.email || 'User',
+        role: 'admin',
       };
 
       setUser(userData);
@@ -50,8 +56,20 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  const logout = () => {
-    setUser(null);
+  const logout = async () => {
+    try {
+      setLoading(true);
+      const { error } = await supabase.auth.signOut();
+      if (error) {
+        throw error;
+      }
+      setUser(null);
+    } catch (error) {
+      console.error('Logout error:', error);
+      throw error;
+    } finally {
+      setLoading(false);
+    }
   };
 
   const hasRole = (role) => user?.role === role;
