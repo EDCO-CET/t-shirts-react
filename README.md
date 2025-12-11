@@ -1,4 +1,4 @@
-# T-Shirts React App
+# T-Shirts React App - Version 1.0
 
 A React application for managing a t-shirt catalog with authentication and Supabase backend.
 
